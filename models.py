@@ -44,8 +44,8 @@ def generate_password(*args):
 
     # Build the pool: only add a set if the user said "yes"
     character_pool = "".join(
-        char_set for (_, char_set), passwd_requirements in zip(categories, passwd_requirements[:-1])
-        if passwd_requirements == "yes"
+        char_set for (_, char_set), passwd_pref in zip(categories, passwd_requirements[:-1])
+        if passwd_pref == "yes"
     )
 
     if not character_pool:
