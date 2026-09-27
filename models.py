@@ -29,17 +29,27 @@ def get_user_requirements():
     return passwd_requirements
 
 
-def generate_password(uppercase, lowercase, digits, symbols, passwd_length ):
-    passwd_requirements = [uppercase, lowercase, digits, symbols, passwd_length]
-    yes_no_requirements = [item for item in passwd_requirements if type(item) is str]
+def generate_password(*args):
+     # args unpacks to: (uppercase, lowercase, digits, punctuation, length)
+    passwd_requirements = list(args)
+    passwd_length = passwd_requirements[-1] # pick the passwd length the first index from the end of the list
 
-    if all(value == 'yes' for value in yes_no_requirements):
-        character_pool = (
-            string.ascii_lowercase +
-            string.ascii_uppercase +
-            string.digits +
-            string.punctuation
-        )
+    # Map each preference in order to its character set
+    categories = [
+        ("uppercase", string.ascii_uppercase),
+        ("lowercase", string.ascii_lowercase),
+        ("digits", string.digits),
+        ("punctuation", string.punctuation),
+    ]
+
+    # Build the pool: only add a set if the user said "yes"
+    character_pool = "".join(
+        char_set for (_, char_set), passwd_requirements in zip(categories, passwd_requirements[:-1])
+        if passwd_requirements == "yes"
+    )
+
+    if not character_pool:
+        return "Error: Select at least one character type."
 
     password = "".join(
         secrets.choice(character_pool)

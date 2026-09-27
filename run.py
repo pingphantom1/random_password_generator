@@ -1,0 +1,4 @@
+from app import start_application
+
+if __name__ == "__main__":
+    app = start_application()
