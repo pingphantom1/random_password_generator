@@ -1,4 +1,4 @@
-from models import get_user_requirements, generate_password
+from models import get_user_requirements, get_passwd_length, generate_password
 
 def start_application():
     while True:
@@ -13,7 +13,7 @@ def start_application():
             break
 
         if response == 'yes':
-            new_password = generate_password(*get_user_requirements())
+            new_password = generate_password(*get_passwd_length(*get_user_requirements()))
             print(f"The generated password is: {new_password}")
         else:
             print("Invalid response. Enter yes or no to proceed\n")

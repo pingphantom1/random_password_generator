@@ -10,23 +10,31 @@ def get_user_requirements():
     include_special_characters = input("Include special symbols/punctuation (!@#$%^&*...)?: ").strip().lower()
     
 
-    passwd_requirements = [include_upper_case, include_lower_case, include_digits, include_special_characters]
+    requirements = [include_upper_case, include_lower_case, include_digits, include_special_characters]
+    return requirements
 
-    def get_passwd_length(): # Geet user to input the desired password length
-        while True: #Loop this function when user enters a value that is not a number
-            try:
-                get_required_passwd_length = input("\nEnter the preferred length of the password: ").strip() # Remove beginning or trailing spaces from user input
-                preferred_length = int(get_required_passwd_length)
-                return preferred_length
-            except ValueError:
-                print("Invalid input, please enter a valid number (eg. 12, 16)")
-            except Exception as e:
-                print(f"An unexpected error occured. Error: {e}")
+def get_passwd_length(uppercase, lowercase, digits, punctuation): # Geet user to input the desired password length
+    passwd_requirements = [uppercase, lowercase, digits, punctuation]
+    
+    while True: #Loop this function when user enters a value that is not a number
+        try:
+            get_required_passwd_length = input("\nEnter the preferred length of the password: ").strip() # Remove beginning or trailing spaces from user input
+            preferred_length = int(get_required_passwd_length)
 
-    passwd_length = get_passwd_length()
-    passwd_requirements.append(passwd_length)
-        
-    return passwd_requirements
+            # prevent negative or zero password length
+            if preferred_length <= 0 or preferred_length == 0 or type(preferred_length) == str:
+                print("Invalid length. Password length cannot be 0 or a negative number or text")
+                preferred_length = get_passwd_length()
+            else:
+                passwd_requirements.append(preferred_length)
+                
+            return passwd_requirements
+        except ValueError:
+            print("Invalid input, please enter a valid number (eg. 12, 16)")
+        except TypeError:
+            print("Invalid input, please enter a valid positive number (eg. 12, 16)")
+        except Exception as e:
+            print(f"An unexpected error occured. Error: {e}")
 
 
 def generate_password(*args):
@@ -50,10 +58,13 @@ def generate_password(*args):
 
     if not character_pool:
         return "Error: Select at least one character type."
-
-    password = "".join(
-        secrets.choice(character_pool)
-        for _ in range(passwd_length)
-        )
-
-    return password
+    while True:
+        try:
+            password = "".join(
+                secrets.choice(character_pool)
+                for _ in range(passwd_length)
+                )
+            return password
+        except TypeError:
+            print("Invalid length. Password length cannot be 0 or a negative number")
+            passwd_length = get_passwd_length()
